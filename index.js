@@ -1,5 +1,3 @@
-// https://www.reserved.com/pl/pl/jeansowa-koszula-regular-fit-850em-55j
-
 // =========================== LOCALSTORAGE OPERATIONS =============================================
 
 /**

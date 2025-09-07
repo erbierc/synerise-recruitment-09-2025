@@ -30,12 +30,35 @@ This script involves 13 functions.
 
 #### `getCart()`
 
-The function accesses the `cart` item from `localStorage` and parses the included JSON into an object.
+The function accesses the `cart` item from `localStorage` and parses the included JSON into an object. If the cart doesn't pass the check, returns an empty array.
 
 ```javascript
 function getCart() {
-  let cart = JSON.parse(window.localStorage.getItem("cart")) ?? []
-  return cart
+  let cart = JSON.parse(window.localStorage.getItem("cart"))
+  return isCartValid(cart) ? cart : []
+}
+```
+
+#### `isCartValid(cart)`
+
+The function checks if cart is of valid type.
+
+```javascript
+function isCartValid(cart) {
+  if (!Array.isArray(cart) || !cart) return false
+
+  for (const product of cart) {
+    if (
+      !product ||
+      typeof product.name !== "string" ||
+      typeof product.price !== "string" ||
+      typeof product.url !== "string" ||
+      typeof product.image !== "string"
+    )
+      return false
+  }
+
+  return true
 }
 ```
 

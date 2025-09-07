@@ -7,8 +7,31 @@
  * @returns {Array} The current cart.
  */
 function getCart() {
-  let cart = JSON.parse(window.localStorage.getItem("cart")) ?? []
-  return cart
+  let cart = JSON.parse(window.localStorage.getItem("cart"))
+  return isCartValid(cart) ? cart : []
+}
+
+/**
+ * Checks if cart is valid.
+ *
+ * @param {Array} cart - Cart.
+ * @returns {Boolean} True if valid, false if not.
+ */
+function isCartValid(cart) {
+  if (!Array.isArray(cart) || !cart) return false
+
+  for (const product of cart) {
+    if (
+      !product ||
+      typeof product.name !== "string" ||
+      typeof product.price !== "string" ||
+      typeof product.url !== "string" ||
+      typeof product.image !== "string"
+    )
+      return false
+  }
+
+  return true
 }
 
 /**

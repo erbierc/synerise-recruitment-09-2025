@@ -2,21 +2,46 @@
 
 // =========================== LOCALSTORAGE OPERATIONS =============================================
 
+/**
+ * Retrieves the cart from localStorage.
+ * Returns an empty array if none exists.
+ *
+ * @returns {Array} The current cart.
+ */
 function getCart() {
   let cart = JSON.parse(window.localStorage.getItem("cart")) ?? []
   return cart
 }
 
+/**
+ * Saves the cart to localStorage.
+ *
+ * @param {Array} cart - The cart to store.
+ */
 function setCart(cart) {
   window.localStorage.setItem("cart", JSON.stringify(cart))
 }
 
+/**
+ * Clears the cart from localStorage.
+ */
 function clearCart() {
   window.localStorage.setItem("cart", JSON.stringify([]))
 }
 
 // ================================== CART OPERATIONS ======================================
 
+/**
+ * Adds a product to the cart.
+ * Increases quantity if the product already exists.
+ *
+ * @param {Object} product - The product to add.
+ * @param {string} product.name - Product name.
+ * @param {string} product.price - Product price string.
+ * @param {string} product.image - Product image URL.
+ * @param {string} product.url - Product page URL.
+ * @returns {Array} Updated cart.
+ */
 function addProduct(product) {
   let cart = getCart()
   let productIndex = getProductIndex(product, cart)
@@ -30,6 +55,12 @@ function addProduct(product) {
   return cart
 }
 
+/**
+ * Removes a product from the cart by index.
+ *
+ * @param {number} productIndex - Index of the product in the cart.
+ * @returns {Array} Updated cart.
+ */
 function removeProduct(productIndex) {
   let cart = getCart()
   cart.splice(productIndex, 1)
@@ -38,6 +69,12 @@ function removeProduct(productIndex) {
   return cart
 }
 
+/**
+ * Increases the quantity of a product in the cart.
+ *
+ * @param {number} productIndex - Index of the product in the cart.
+ * @returns {Array} Updated cart.
+ */
 function increaseQuantity(productIndex) {
   let cart = getCart()
   if (cart[productIndex]) {
@@ -48,6 +85,13 @@ function increaseQuantity(productIndex) {
   return cart
 }
 
+/**
+ * Decreases the quantity of a product in the cart.
+ * Removes the product if quantity would drop below 1.
+ *
+ * @param {number} productIndex - Index of the product in the cart.
+ * @returns {Array} Updated cart.
+ */
 function decreaseQuantity(productIndex) {
   let cart = getCart()
   if (cart[productIndex]) {
@@ -64,18 +108,27 @@ function decreaseQuantity(productIndex) {
 
 // ========================== HELPER FUNCTIONS ================================
 
+/**
+ * Calculates the total price for a product type.
+ *
+ * @param {number} quantity - Quantity of the product.
+ * @param {number} price - Unit price of the product.
+ * @returns {number} Total price.
+ */
 function calculateProductTotal(quantity, price) {
   return quantity * price
 }
 
-function parseCurrency(price) {
-  let parts = price.split(" ")
-  if (parts.length === 1) {
-    parts = price.split("\u00A0") // non-breaking space
-  }
-  return parts[1]
-}
-
+/**
+ * Parses a price string into numeric value and currency.
+ * Handles both spaces and non-breaking spaces.
+ *
+ * @param {string} price - Price string, e.g. "199,99 PLN".
+ * @returns {{ numeric: number, currency: string }} Parsed price object.
+ *
+ * @example
+ * parsePrice("199,99 PLN") // { numeric: 199.99, currency: "PLN" }
+ */
 function parsePrice(price) {
   let parts = price.split(" ")
   if (parts.length === 1) {
@@ -88,24 +141,40 @@ function parsePrice(price) {
 
 // ============================ PRODUCT DATA ==============================
 
+/**
+ * Collects product data from the current page.
+ *
+ * @returns {{ name: string, price: string, image: string, url: string }} Product data.
+ */
 function getProductData() {
-  // according to best SEO practices, product name should be the only h1 element
   let name = document.getElementsByTagName("h1")[0].innerText
-  // get the rest of the product data by using class names
   let price = document.getElementsByClassName("basic-price")[0].innerText
   let image = document.getElementsByClassName("sc-hzMMVR")[0].src
   let url = window.location.href
   return { name, price, image, url }
 }
 
+/**
+ * Finds the index of a product in the cart by URL.
+ *
+ * @param {Object} product - Product to search for.
+ * @param {Array} cart - The cart array.
+ * @returns {number} Index of the product, or -1 if not found.
+ */
 function getProductIndex(product, cart) {
-  // find product via url, we don't know the quantity
   let object = cart.find((obj) => obj.url == product.url)
   return cart.indexOf(object)
 }
 
 // ============================ RENDERING ==============================
 
+/**
+ * Renders a single product entry for the cart view.
+ *
+ * @param {Object} product - Product object.
+ * @param {number} index - Index of the product in the cart.
+ * @returns {HTMLDivElement} Rendered product element.
+ */
 function renderProduct(product, index) {
   let productPrice = parsePrice(product.price)
   let productTotal = calculateProductTotal(
@@ -134,6 +203,10 @@ function renderProduct(product, index) {
   return productDiv
 }
 
+/**
+ * Renders the entire cart UI.
+ * Creates the cart container if it doesn't exist.
+ */
 function renderCart() {
   let cartDiv = document.getElementById("cart")
   let productsDiv
@@ -150,7 +223,7 @@ function renderCart() {
       margin: 1rem;
       border: 1px solid black;
       border-radius: 8px;
-      max-height: 98vh;
+      max-height: 90vh;
       overflow: auto;
     `
     let title = document.createElement("h2")

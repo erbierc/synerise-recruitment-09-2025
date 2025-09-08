@@ -24,7 +24,7 @@ This is a script which focuses on product cart functionality. It uses `localStor
 
 ## Technical documentation
 
-This script involves 13 functions.
+This script involves multiple functions.
 
 ### `localStorage` operations
 
